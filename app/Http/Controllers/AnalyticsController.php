@@ -62,13 +62,17 @@ class AnalyticsController extends Controller
         return  ['suma' => $suma];
     }
     // Un país concreto con el sumatorio de los datos
-    public function consulta4($countriesAndTerritories)
+    public function consulta4($fecha, $countriesAndTerritories)
     {
+        $formatofecha = str_replace("-", "/", $fecha);
+
+
         $paistotal = DB::table('entries')
             ->Join('countries', 'countries.id', '=', 'entries.country_id')
             ->select('entries.country_id', 'countries.countriesAndTerritories', DB::raw('SUM(entries.cases) AS cases'), DB::raw('SUM(entries.deaths) AS deaths'))
-            ->groupBy('entries.country_id')
             ->Where('countriesAndTerritories', '=', $countriesAndTerritories)
+            ->where('dateRep', '=', $formatofecha)
+            ->groupBy('entries.country_id')
             ->get();
         return  ['suma' => $paistotal];
     }
